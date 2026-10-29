@@ -1,0 +1,13 @@
+const router=require('express').Router();
+const controller=require('../controller/UserController');
+const authenticate=require('../middleware/authenticate');
+const authorize=require('../middleware/authorize');
+const validate=require('../middleware/validate');
+const wrap=require('../middleware/asyncHandler');
+const {validateUpdate}=require('../middleware/validator/user');
+router.use(authenticate);
+router.get('/',authorize(['Admin']),wrap(controller.GetAll));
+router.get('/:id',wrap(controller.GetById));
+router.put('/:id',validate(validateUpdate),wrap(controller.Update));
+router.delete('/:id',authorize(['Admin']),wrap(controller.Delete));
+module.exports=router;
