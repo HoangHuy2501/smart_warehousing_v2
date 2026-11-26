@@ -8,7 +8,7 @@ function errorHandler(err,req,res,next){
 }
 module.exports={notFound,errorHandler};
 
-// Contract lỗi của bốn endpoint kho được FE hiện tại đọc trực tiếp.
+// Contract lỗi của các endpoint xác thực kho được FE hiện tại đọc trực tiếp.
 module.exports.warehouseErrorHandler = (error, req, res, next) => {
   if (res.headersSent) return next(error);
   const isApiError = error instanceof ApiError;
