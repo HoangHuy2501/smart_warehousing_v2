@@ -6,6 +6,10 @@ const cors = require("cors");
 const logger = require("morgan");
 const database = require("./src/config/connectData");
 
+const warehouseRoutes = require("./src/routes");
+const { requireJwtSecret } = require("./src/config/env");
+const { notFound, errorHandler, warehouseErrorHandler } = require("./src/middleware/errorHandler");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -15,9 +19,14 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use("/api/warehouse", warehouseRoutes, warehouseErrorHandler);
+app.use(notFound);
+app.use(errorHandler);
+
 // Start Server
 async function startServer() {
     try {
+        requireJwtSecret();
         await database.getPool();
 
         console.log("✅ SQL Server connected successfully");
@@ -27,11 +36,11 @@ async function startServer() {
         });
 
     } catch (error) {
-        console.error("❌ SQL Server connection failed:", error.message);
+        console.error("❌ Server startup failed:", error.message);
         process.exit(1);
     }
 }
 
-startServer();
+if (require.main === module) startServer();
 
 module.exports = app;
